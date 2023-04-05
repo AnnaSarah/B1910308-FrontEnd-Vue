@@ -7,6 +7,13 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
   server: {
     port: 3001,
+    proxy: {
+      "/api": {
+      target: "http://localhost:3000/",
+      changeOrigin: true,
+      },
+      }
+      
   },
     
   plugins: [vue()],
@@ -16,3 +23,5 @@ export default defineConfig({
     }
   }
 })
+// Để không cần phải gán cứng hostname/IP của API server trong dự án, chúng ta hiệu chỉnh
+// vite.config.js, cấu hình proxy chuyển các yêu cầu có URL chứa /api xuất phát từ ứng dụng Vue
