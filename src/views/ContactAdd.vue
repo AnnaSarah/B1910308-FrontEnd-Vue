@@ -1,7 +1,7 @@
 <template>
     <div v-if="contact" class="page">
-        <h4>Hiệu chỉnh Liên hệ</h4>
-        <ContactForm :contact="contact" @submit:contact="updateContact" @delete:contact="deleteContact" />
+        <h4>Thêm Một Liên hệ</h4>
+        <ContactForm :contact="contact" @submit:contact="addContact" />
         <p>{{ message }}</p>
     </div>
 </template>
@@ -14,7 +14,10 @@ export default {
         ContactForm,
     },
     props: {
-        id: { type: String, required: true },
+        id: {
+            type: String,
+            required: true
+        },
     },
     data() {
         return {
@@ -23,12 +26,17 @@ export default {
         };
     },
     methods: {
-        async getContact(id) {
+        async getContact() {
             try {
-                this.contact = await ContactService.get(id);
+                this.contact = await {
+                    name: "",
+                    email: "",
+                    address: "",
+                    phone: "",
+                    favorite: false
+                }
             } catch (error) {
                 console.log(error);
-                // Chuyển sang trang NotFound đồng thời giữ cho URL không đổi
                 this.$router.push({
                     name: "notfound",
                     params: {
@@ -39,28 +47,20 @@ export default {
                 });
             }
         },
-        async updateContact(data) {
+        async addContact(data) {
             try {
-                await ContactService.update(this.contact._id, data);
-                this.message = "Liên hệ được cập nhật thành công.";
+                await ContactService.create(data);
+                this.message = "Liên hệ được thêm thành công.";
             } catch (error) {
                 console.log(error);
             }
         },
-        async deleteContact() {
-            if (confirm("Bạn muốn xóa Liên hệ này?")) {
-                try {
-                    await ContactService.delete(this.contact._id);
-                    this.$router.push({ name: "contactbook" });
-                } catch (error) {
-                    console.log(error);
-                }
-            }
-        },
     },
     created() {
-        this.getContact(this.id);
+        this.getContact();
         this.message = "";
     },
 };
+
 </script>
+
